@@ -1,0 +1,29 @@
+name: Create Pull Request
+
+on:
+  push:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: superbrothers/setup-ga@v1
+    - run: |
+        time="$(date +%s)"
+        ga set-env time "$time"
+        ga set-output time "$time"
+      id: get_time
+    - uses: actions/checkout@v2
+      with:
+        repository: superbrothers/hello
+    - run: echo "$time" >"$time"
+    - uses: peter-evans/create-pull-request@v2
+      with:
+        token: ${{ secrets.GITHUB_PAT }}
+        commit-message: Add ${{ steps.get_time.outputs.time }} file.
+        committer: Kazuki Suda <superbrothers@users.noreply.github.com>
+        author: Kazuki Suda <superbrothers@users.noreply.github.com>
+        title: Add ${{ steps.get_time.outputs.time }} file.
+        body: This PR is created by https://github.com/superbrothers-sandbox/try-github-actions-pr.
+        branch: ${{ steps.get_time.outputs.time }}
+        labels: automerge
